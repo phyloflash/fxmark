@@ -25,18 +25,21 @@ def catch_ctrl_C(sig, frame):
 class Runner(object):
     # media path
     LOOPDEV = "/dev/loopX"
-    NVMEDEV = "/dev/nvme0n1pX"
+    NVMEDEV = "/dev/nvme1n1p1"
     HDDDEV  = "/dev/sdX"
-    SSDDEV  = "/dev/sdY"
+    SSDDEV  = "/dev/sdf1"
 
     # test core granularity
-    CORE_FINE_GRAIN   = 0
-    CORE_COARSE_GRAIN = 1
+    CORE_FINE_GRAIN   = 1
+    CORE_COARSE_GRAIN = 0
 
     def __init__(self, \
                  core_grain = CORE_COARSE_GRAIN, \
                  pfm_lvl = PerfMon.LEVEL_LOW, \
+                 # run_filter = ("nvme", "*", "DRBL", "*", "directio")):
+                 # ("mem", "*", "DWOL", "80", "directio")),
                  run_filter = ("*", "*", "*", "*", "*")):
+
         # run config
         self.CORE_GRAIN    = core_grain
         self.PERFMON_LEVEL = pfm_lvl
@@ -45,48 +48,49 @@ class Runner(object):
         self.DEBUG_OUT     = False
 
         # bench config
-        self.DISK_SIZE     = "32G"
+        self.DISK_SIZE     = "30G"
         self.DURATION      = 30 # seconds
-        self.DIRECTIOS     = ["bufferedio", "directio"]  # enable directio except tmpfs -> nodirectio 
-        self.MEDIA_TYPES   = ["ssd", "hdd", "nvme", "mem"]
-        self.FS_TYPES      = [
-#        self.FS_TYPES      = ["tmpfs",
-                              "ext4", "ext4_no_jnl",
-                              "xfs",
-                              "btrfs", "f2fs",
-                              # "jfs", "reiserfs", "ext2", "ext3",
+        # self.DIRECTIOS     = ["bufferedio", "directio"]  # enable directio except tmpfs -> nodirectio
+        self.DIRECTIOS     = [ str(IO_TYPE_CFG_ARG) ]
+        # self.MEDIA_TYPES   = ["ssd", "hdd", "nvme", "mem"]
+        # XXX: MEDIA_TYPES receives from arguments now
+        self.MEDIA_TYPES = [MEDIA_TYPE_CFG_ARG]
+        self.FS_TYPES      = ["tmpfs", "ext4", "ext4_no_jnl", "f2fs",
+                              # "xfs", "btrfs", "jfs", "reiserfs", "ext2", "ext3",
         ]
         self.BENCH_TYPES   = [
             # write/write
-            "DWAL",
             "DWOL",
             "DWOM",
+            "DWAL",
+            "DWTL",
             "DWSL",
-            "MWRL",
-            "MWRM",
             "MWCL",
             "MWCM",
-            "MWUM",
             "MWUL",
-            "DWTL",
+            "MWUM",
+            "MWRL",
+            "MWRM",
 
             # filebench
-            "filebench_varmail",
-            "filebench_oltp",
-            "filebench_fileserver",
+            # "filebench_varmail",
+            # "filebench_oltp",
+            # "filebench_fileserver",
 
             # dbench
-            "dbench_client",
+            # "dbench_client",
 
             # read/read
+
+            "DRBL",
+            "DRBM",
+            "DRBH",
+
             "MRPL",
             "MRPM",
             "MRPH",
-            "MRDM",
             "MRDL",
-            "DRBH",
-            "DRBM",
-            "DRBL",
+            "MRDM",
 
             # read/write
             # "MRPM_bg",
@@ -155,7 +159,9 @@ class Runner(object):
         self.tmp_path = os.path.normpath(
             os.path.join(CUR_DIR, ".tmp"))
         self.disk_path = os.path.normpath(
-            os.path.join(self.tmp_path, "disk.img"))
+            os.path.join(RAMDISK_PATH_CFG_ARG, "disk.img"))
+        # XXX: Changed to point to the RAMDISK
+            #os.path.join(self.tmp_path, "disk.img"))
         self.perfmon_start = "%s start" % os.path.normpath(
             os.path.join(CUR_DIR, self.PERFMN_NAME))
         self.perfmon_stop = "%s stop" % os.path.normpath(
@@ -184,9 +190,9 @@ class Runner(object):
         self.log("### MEDIA_TYPES    = %s"   % ','.join(self.MEDIA_TYPES))
         self.log("### FS_TYPES       = %s"   % ','.join(self.FS_TYPES))
         self.log("### BENCH_TYPES    = %s"   % ','.join(self.BENCH_TYPES))
-        self.log("### NCORES         = %s"   % 
+        self.log("### NCORES         = %s"   %
                  ','.join(map(lambda c: str(c), self.ncores)))
-        self.log("### CORE_SEQ       = %s" % 
+        self.log("### CORE_SEQ       = %s" %
                  ','.join(map(lambda c: str(c), cpupol.seq_cores)))
         self.log("\n")
         self.log("### MODEL_NAME     = %s" % cpupol.MODEL_NAME)
@@ -225,7 +231,7 @@ class Runner(object):
         self.exec_cmd("sudo -v", self.dev_null)
 
     def drop_caches(self):
-        cmd = ' '.join(["sudo", 
+        cmd = ' '.join(["sudo",
                         os.path.normpath(
                             os.path.join(CUR_DIR, "drop-caches"))])
         self.exec_cmd(cmd, self.dev_null)
@@ -238,9 +244,9 @@ class Runner(object):
             ncores = "all"
         else:
             ncores = ','.join(map(lambda c: str(c), cpupol.seq_cores[0:ncore]))
-        cmd = ' '.join(["sudo", 
+        cmd = ' '.join(["sudo",
                         os.path.normpath(
-                            os.path.join(CUR_DIR, "set-cpus")), 
+                            os.path.join(CUR_DIR, "set-cpus")),
                         ncores])
         self.exec_cmd(cmd, self.dev_null)
 
@@ -284,11 +290,11 @@ class Runner(object):
         self.exec_cmd("mkdir -p " + self.tmp_path, self.dev_null)
         if not self.mount_tmpfs("mem", "tmpfs", self.tmp_path):
             return False;
-        self.exec_cmd("dd if=/dev/zero of=" 
+        self.exec_cmd("dd if=/dev/zero of="
                       + self.disk_path +  " bs=1G count=1024000",
                       self.dev_null)
         p = self.exec_cmd(' '.join(["sudo", "losetup",
-                                    Runner.LOOPDEV, self.disk_path]), 
+                                    Runner.LOOPDEV, self.disk_path]),
                           self.dev_null)
         if p.returncode == 0:
             self.umount_hook.append(self.deinit_mem_disk)
@@ -421,10 +427,10 @@ class Runner(object):
         directio = '1' if dio is "directio" else '0'
 
         if directio is '1':
-            if fs is "tmpfs": 
+            if fs is "tmpfs":
                 print("# INFO: DirectIO under tmpfs disabled by default")
                 directio='0';
-            else: 
+            else:
                 print("# INFO: DirectIO Enabled")
 
         cmd = ' '.join([self.fxmark_env(),
@@ -482,15 +488,20 @@ def confirm_media_path():
     print("%" * 80)
     print("%% WARNING! WARNING! WARNING! WARNING! WARNING!")
     print("%" * 80)
-    yn = input("All data in %s, %s, %s and %s will be deleted. Is it ok? [Y,N]: "
-            % (Runner.HDDDEV, Runner.SSDDEV, Runner.NVMEDEV, Runner.LOOPDEV))
-    if yn != "Y":
-        print("Please, check Runner.LOOPDEV and Runner.NVMEDEV")
-        exit(1)
-    yn = input("Are you sure? [Y,N]: ")
-    if yn != "Y":
-        print("Please, check Runner.LOOPDEV and Runner.NVMEDEV")
-        exit(1)
+
+    # FIXME FIXME FIXME FIXME
+    # FIXME: Removed this user input part to avoid blocking
+    # yn = input("All data in %s, %s, %s and %s will be deleted. Is it ok? [Y,N]: "
+    #         % (Runner.HDDDEV, Runner.SSDDEV, Runner.NVMEDEV, Runner.LOOPDEV))
+    # if yn != "Y":
+    #     print("Please, check Runner.LOOPDEV and Runner.NVMEDEV")
+    #     exit(1)
+    # yn = input("Are you sure? [Y,N]: ")
+    # if yn != "Y":
+    #     print("Please, check Runner.LOOPDEV and Runner.NVMEDEV")
+    #     exit(1)
+    # FIXME FIXME FIXME FIXME
+
     print("%" * 80)
     print("\n\n")
 
@@ -514,10 +525,19 @@ if __name__ == "__main__":
     # - (storage device, filesystem, test case, # core, directio | bufferedio)
 
     # TODO: make it scriptable
+
+    # XXX: Here is where we get input from commands arguments
+    NUM_CORES_CFG_ARG = sys.argv[1]
+    MEDIA_TYPE_CFG_ARG = sys.argv[2]
+    BENCH_TYPE_CFG_ARG = sys.argv[3]
+    IO_TYPE_CFG_ARG = sys.argv[4]
+    RAMDISK_PATH_CFG_ARG = sys.argv[5]
+
     run_config = [
         (Runner.CORE_FINE_GRAIN,
          PerfMon.LEVEL_LOW,
-         ("mem", "*", "DWOL", "80", "directio")),
+         (str(MEDIA_TYPE_CFG_ARG), "*", str(BENCH_TYPE_CFG_ARG), str(NUM_CORES_CFG_ARG), str(IO_TYPE_CFG_ARG))),
+        # ("mem", "*", "DWOL", "80", "directio")),
         # ("mem", "tmpfs", "filebench_varmail", "32", "directio")),
         # (Runner.CORE_COARSE_GRAIN,
         #  PerfMon.LEVEL_PERF_RECORD,
