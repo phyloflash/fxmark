@@ -157,11 +157,12 @@ class Runner(object):
         self.dbench_path = os.path.normpath(
             os.path.join(CUR_DIR, self.DBENCH_NAME))
         self.tmp_path = os.path.normpath(
-            os.path.join(CUR_DIR, ".tmp"))
+        # XXX: changed to point to the RAMDISK
+            #os.path.join(CUR_DIR, ".tmp"))
+            os.path.join(RAMDISK_PATH_CFG_ARG, ".tmp"))
         self.disk_path = os.path.normpath(
-            os.path.join(RAMDISK_PATH_CFG_ARG, "disk.img"))
-        # XXX: Changed to point to the RAMDISK
-            #os.path.join(self.tmp_path, "disk.img"))
+            os.path.join(self.tmp_path, "disk.img"))
+
         self.perfmon_start = "%s start" % os.path.normpath(
             os.path.join(CUR_DIR, self.PERFMN_NAME))
         self.perfmon_stop = "%s stop" % os.path.normpath(
