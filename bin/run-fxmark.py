@@ -224,6 +224,8 @@ class Runner(object):
         return ncores
 
     def exec_cmd(self, cmd, out=None):
+        # TODO: Include here something that we call perf record
+
         p = subprocess.Popen(cmd, shell=True, stdout=out, stderr=out)
         p.wait()
         return p
@@ -460,6 +462,13 @@ class Runner(object):
                         "--profend",   "\"%s\"" % self.perfmon_stop,
                         "--proflog", self.perfmon_log])
         # TODO: Here could be added the perf record
+        if RUN_PERF:
+            print(cmd)
+            sys.exit()
+        if RUN_OPROFILE:
+            print(cmd)
+            sys.exit()
+
         p = self.exec_cmd(cmd, self.redirect)
         if self.redirect:
             for l in p.stdout.readlines():
@@ -545,8 +554,6 @@ if __name__ == "__main__":
     # o testcase filter
     # - (storage device, filesystem, test case, # core, directio | bufferedio)
 
-    # TODO: make it scriptable
-
     # XXX: Here is where we get input from commands arguments
 
     NUM_CORES_CFG_ARG = "4"
@@ -554,9 +561,10 @@ if __name__ == "__main__":
     BENCH_TYPE_CFG_ARG = "DBRH"
     IO_TYPE_CFG_ARG = "bufferedio"
     RAMDISK_PATH_CFG_ARG = "/mnt/ramdisk1"
+    RUN_PERF = 0
+    RUN_OPROFILE = 0
 
     # If there is arguments, lets use them
-
     if (len(sys.argv) > 3):
         # Received values
         NUM_CORES_CFG_ARG = sys.argv[1]
@@ -564,6 +572,8 @@ if __name__ == "__main__":
         BENCH_TYPE_CFG_ARG = sys.argv[3]
         IO_TYPE_CFG_ARG = sys.argv[4]
         RAMDISK_PATH_CFG_ARG = sys.argv[5]
+        RUN_PERF = int(sys.argv[6])
+        RUN_OPROFILE = int(sys.argv[7])
 
     run_config = [
         (Runner.CORE_FINE_GRAIN,
