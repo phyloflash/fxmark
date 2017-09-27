@@ -26,8 +26,8 @@ class Runner(object):
     # media path
     LOOPDEV = "/dev/loopX"
     NVMEDEV = "/dev/nvme1n1p1"
-    HDDDEV  = "/dev/sdX"
-    SSDDEV  = "/dev/sdf1"
+    HDDDEV  = "/dev/mdxxx"
+    SSDDEV  = "/dev/md0p1"
 
     # test core granularity
     CORE_FINE_GRAIN   = 1
@@ -45,10 +45,10 @@ class Runner(object):
         self.PERFMON_LEVEL = pfm_lvl
         self.FILTER        = run_filter # media, fs, bench, ncore, directio
         self.DRYRUN        = False
-        self.DEBUG_OUT     = False
+        self.DEBUG_OUT     = True
 
         # bench config
-        self.DISK_SIZE     = "30G"
+        self.DISK_SIZE     = "20G"
         self.DURATION      = 30 # seconds
         # self.DIRECTIOS     = ["bufferedio", "directio"]  # enable directio except tmpfs -> nodirectio
         self.DIRECTIOS     = [ str(IO_TYPE_CFG_ARG) ]
@@ -528,11 +528,22 @@ if __name__ == "__main__":
     # TODO: make it scriptable
 
     # XXX: Here is where we get input from commands arguments
-    NUM_CORES_CFG_ARG = sys.argv[1]
-    MEDIA_TYPE_CFG_ARG = sys.argv[2]
-    BENCH_TYPE_CFG_ARG = sys.argv[3]
-    IO_TYPE_CFG_ARG = sys.argv[4]
-    RAMDISK_PATH_CFG_ARG = sys.argv[5]
+
+    NUM_CORES_CFG_ARG = "4"
+    MEDIA_TYPE_CFG_ARG = "nvme"
+    BENCH_TYPE_CFG_ARG = "DBRH"
+    IO_TYPE_CFG_ARG = "bufferedio"
+    RAMDISK_PATH_CFG_ARG = "/mnt/ramdisk1"
+
+    # If there is arguments, lets use them
+
+    if (len(sys.argv) > 3):
+        # Received values
+        NUM_CORES_CFG_ARG = sys.argv[1]
+        MEDIA_TYPE_CFG_ARG = sys.argv[2]
+        BENCH_TYPE_CFG_ARG = sys.argv[3]
+        IO_TYPE_CFG_ARG = sys.argv[4]
+        RAMDISK_PATH_CFG_ARG = sys.argv[5]
 
     run_config = [
         (Runner.CORE_FINE_GRAIN,
