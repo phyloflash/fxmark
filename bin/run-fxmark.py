@@ -257,6 +257,16 @@ class Runner(object):
             return (ncore, 1)
         return (ncore, 0)
 
+    # XXX: Let's settle the lock_stat flag here
+    def set_lock_stat(self):
+        self.exec_cmd("sudo sh -c \"echo 0 > /proc/lock_stat\"", self.dev_null);
+        self.exec_cmd("sudo sh -c \"echo 1 > /proc/sys/kernel/lock_stat\"", self.dev_null);
+
+    # XXX: Let's unset the lock_stat flag here
+    def unset_lock_stat(self):
+        self.exec_cmd("sudo sh -c \"echo 0 > /proc/sys/kernel/lock_stat\"", self.dev_null);
+
+
     def prepre_work(self, ncore):
         self.keep_sudo()
         self.exec_cmd("sudo sh -c \"echo 0 >/proc/sys/kernel/lock_stat\"",
@@ -268,9 +278,13 @@ class Runner(object):
     def pre_work(self):
         self.keep_sudo()
         self.drop_caches()
+        # XXX: included
+        self.set_lock_stat()
 
     def post_work(self):
         self.keep_sudo()
+        # XXX: included
+        self.unset_lock_stat()
 
     def unset_loopdev(self):
         self.exec_cmd(' '.join(["sudo", "losetup", "-d", Runner.LOOPDEV]),
@@ -445,6 +459,7 @@ class Runner(object):
                         "--profbegin", "\"%s\"" % self.perfmon_start,
                         "--profend",   "\"%s\"" % self.perfmon_stop,
                         "--proflog", self.perfmon_log])
+        # TODO: Here could be added the perf record
         p = self.exec_cmd(cmd, self.redirect)
         if self.redirect:
             for l in p.stdout.readlines():
@@ -454,8 +469,8 @@ class Runner(object):
         cmd = ' '.join([self.fxmark_env(),
                         "%s; rm -f %s/*.pm" % (self.perfmon_stop, self.log_dir)])
         self.exec_cmd(cmd)
-        self.exec_cmd("sudo sh -c \"echo 0 >/proc/sys/kernel/lock_stat\"",
-                      self.dev_null)
+        #self.exec_cmd("sudo sh -c \"echo 0 >/proc/sys/kernel/lock_stat\"",
+         #             self.dev_null)
 
     def run(self):
         try:
@@ -475,6 +490,11 @@ class Runner(object):
                     continue
                 self.log("## %s:%s:%s:%s:%s" % (media, fs, bench, nfg, dio))
                 self.pre_work()
+
+                ###########################################
+                # XXX: Here is where things happen indeed #
+                ###########################################
+
                 self.fxmark(media, fs, bench, ncore, nfg, nbg, dio)
                 self.post_work()
             self.log("### NUM_TEST_CONF  = %d" % (cnt + 1))
