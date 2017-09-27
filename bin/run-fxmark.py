@@ -48,8 +48,8 @@ class Runner(object):
         self.DEBUG_OUT     = True
 
         # bench config
-        self.DISK_SIZE     = "20G"
-        self.DURATION      = 30 # seconds
+        self.DISK_SIZE     = "2G"
+        self.DURATION      = 3 # seconds
         # self.DIRECTIOS     = ["bufferedio", "directio"]  # enable directio except tmpfs -> nodirectio
         self.DIRECTIOS     = [ str(IO_TYPE_CFG_ARG) ]
         # self.MEDIA_TYPES   = ["ssd", "hdd", "nvme", "mem"]
@@ -259,12 +259,12 @@ class Runner(object):
             return (ncore, 1)
         return (ncore, 0)
 
-    # XXX: Let's settle the lock_stat flag here
+    # INFO: Let's settle the lock_stat flag here
     def set_lock_stat(self):
         self.exec_cmd("sudo sh -c \"echo 0 > /proc/lock_stat\"", self.dev_null);
         self.exec_cmd("sudo sh -c \"echo 1 > /proc/sys/kernel/lock_stat\"", self.dev_null);
 
-    # XXX: Let's unset the lock_stat flag here
+    # INFO: Let's unset the lock_stat flag here
     def unset_lock_stat(self):
         self.exec_cmd("sudo sh -c \"echo 0 > /proc/sys/kernel/lock_stat\"", self.dev_null);
 
@@ -280,13 +280,25 @@ class Runner(object):
     def pre_work(self):
         self.keep_sudo()
         self.drop_caches()
-        # XXX: included
+        # INFO: included
         self.set_lock_stat()
+
+        if RUN_OPROFILE:
+            self.oprofile = subprocess.Popen(["operf", "--system-wide"])
+
 
     def post_work(self):
         self.keep_sudo()
-        # XXX: included
+        # INFO: included
         self.unset_lock_stat()
+        if RUN_OPROFILE:
+            self.oprofile.send_signal(signal.SIGINT)
+            stoud, stderr = self.oprofile.communicate()
+
+        if RUN_PERF:
+            a = 1
+            # TODO: How do we solve the logs problem in perf execution?
+
 
     def unset_loopdev(self):
         self.exec_cmd(' '.join(["sudo", "losetup", "-d", Runner.LOOPDEV]),
@@ -450,7 +462,10 @@ class Runner(object):
             else:
                 print("# INFO: DirectIO Enabled")
 
+        # INFO: Created a lambda function to define when the perf should be called
+        call_perf = lambda : "perf record -g --call-graph dwarf -- " if RUN_PERF else " "
         cmd = ' '.join([self.fxmark_env(),
+                        call_perf(),
                         bin,
                         "--type", type,
                         "--ncore", str(ncore),
@@ -461,14 +476,6 @@ class Runner(object):
                         "--profbegin", "\"%s\"" % self.perfmon_start,
                         "--profend",   "\"%s\"" % self.perfmon_stop,
                         "--proflog", self.perfmon_log])
-        # TODO: Here could be added the perf record
-        if RUN_PERF:
-            print(cmd)
-            sys.exit()
-        if RUN_OPROFILE:
-            print(cmd)
-            sys.exit()
-
         p = self.exec_cmd(cmd, self.redirect)
         if self.redirect:
             for l in p.stdout.readlines():
@@ -478,6 +485,7 @@ class Runner(object):
         cmd = ' '.join([self.fxmark_env(),
                         "%s; rm -f %s/*.pm" % (self.perfmon_stop, self.log_dir)])
         self.exec_cmd(cmd)
+        # XXX: We are commenting here because we created specialized methods to do this
         #self.exec_cmd("sudo sh -c \"echo 0 >/proc/sys/kernel/lock_stat\"",
          #             self.dev_null)
 
@@ -501,7 +509,7 @@ class Runner(object):
                 self.pre_work()
 
                 ###########################################
-                # XXX: Here is where things happen indeed #
+                # INFO: Here is where things happen indeed #
                 ###########################################
 
                 self.fxmark(media, fs, bench, ncore, nfg, nbg, dio)
