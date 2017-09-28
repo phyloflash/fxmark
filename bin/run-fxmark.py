@@ -24,7 +24,7 @@ def catch_ctrl_C(sig, frame):
 
 class Runner(object):
     # media path
-    LOOPDEV = "/dev/loopX"
+    LOOPDEV = "/dev/loop1"
     NVMEDEV = "/dev/nvme1n1p1"
     HDDDEV  = "/dev/mdxxx"
     SSDDEV  = "/dev/md0p1"
@@ -287,7 +287,7 @@ class Runner(object):
             self.oprofile = subprocess.Popen(["operf", "--system-wide"])
 
 
-    def post_work(self):
+    def post_work(self, media, bench, idx_core, fs):
         self.keep_sudo()
         # INFO: included
         self.unset_lock_stat()
@@ -295,9 +295,23 @@ class Runner(object):
             self.oprofile.send_signal(signal.SIGINT)
             stoud, stderr = self.oprofile.communicate()
 
+            # INFO: we are doing here what has been done in the ZSS/exp/run_fx file
+            self.exec_cmd("mkdir ./logs/oprofile_"+str(idx_core)+"_"+bench+"_"+media+"_"+fs, self.dev_null);
+            self.exec_cmd("mv oprofile_data ./logs/oprofile_"+str(idx_core)+"_"+bench+"_"+media+"_"+fs, self.dev_null);
+
         if RUN_PERF:
-            a = 1
-            # TODO: How do we solve the logs problem in perf execution?
+            yr =   str(datetime.datetime.now().year)
+            mon =  str(datetime.datetime.now().month)
+            day =  str(datetime.datetime.now().day)
+            hr =   str(datetime.datetime.now().hour)
+            minu = str(datetime.datetime.now().minute)
+            sec =  str(datetime.datetime.now().second)
+
+            folder_prefix = "perf_"+yr+mon+day+"_"+hr+minu+sec+"_"+media+"_"+bench+"_"+fs
+
+            self.exec_cmd("mkdir "+folder_prefix, self.dev_null)
+            self.exec_cmd("mv perf.data "+folder_prefix, self.dev_null)
+            self.exec_cmd("mv "+folder_prefix+" logs", self.dev_null)
 
 
     def unset_loopdev(self):
@@ -513,7 +527,7 @@ class Runner(object):
                 ###########################################
 
                 self.fxmark(media, fs, bench, ncore, nfg, nbg, dio)
-                self.post_work()
+                self.post_work(media, bench, ncore, fs)
             self.log("### NUM_TEST_CONF  = %d" % (cnt + 1))
         finally:
             signal.signal(signal.SIGINT, catch_ctrl_C)
