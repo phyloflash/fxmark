@@ -262,12 +262,19 @@ class Runner(object):
     # INFO: Let's settle the lock_stat flag here
     def set_lock_stat(self):
         self.exec_cmd("sudo sh -c \"echo 0 > /proc/lock_stat\"", self.dev_null);
-        self.exec_cmd("sudo sh -c \"echo 1 > /proc/sys/kernel/lock_stat\"", self.dev_null);
+        self.exec_cmd("sudo sh -c \"echo 1 > /proc/sys/kernel/lock_stat\"", self.dev_null)
 
     # INFO: Let's unset the lock_stat flag here
-    def unset_lock_stat(self):
-        self.exec_cmd("sudo sh -c \"echo 0 > /proc/sys/kernel/lock_stat\"", self.dev_null);
-
+    def unset_lock_stat(self, path_string):
+        self.exec_cmd("sudo sh -c \"echo 0 > /proc/sys/kernel/lock_stat\"", self.dev_null)
+        self.exec_cmd("sudo sh -c \"cp /proc/lock_stat ./logs/"+path_string+"\"", self.dev_null)
+        print(path_string)
+        print(path_string)
+        print(path_string)
+        print(path_string)
+        print(path_string)
+        print(path_string)
+        #self.exec_cmd("mv lock_stat ./logs/"+path_string, self.dev_null)
 
     def prepre_work(self, ncore):
         self.keep_sudo()
@@ -290,7 +297,7 @@ class Runner(object):
     def post_work(self, media, bench, idx_core, fs):
         self.keep_sudo()
         # INFO: included
-        self.unset_lock_stat()
+        self.unset_lock_stat("lock_stat_"+media+"_"+bench+"_"+str(idx_core)+"_"+fs)
         if RUN_OPROFILE:
             self.oprofile.send_signal(signal.SIGINT)
             stoud, stderr = self.oprofile.communicate()
