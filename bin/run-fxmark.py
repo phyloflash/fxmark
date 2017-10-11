@@ -45,17 +45,18 @@ class Runner(object):
         self.PERFMON_LEVEL = pfm_lvl
         self.FILTER        = run_filter # media, fs, bench, ncore, directio
         self.DRYRUN        = False
-        self.DEBUG_OUT     = True
+        self.DEBUG_OUT     = False
 
         # bench config
-        self.DISK_SIZE     = "2G"
-        self.DURATION      = 3 # seconds
+        self.DISK_SIZE     = "30G"
+        self.DURATION      = 30 # seconds
         # self.DIRECTIOS     = ["bufferedio", "directio"]  # enable directio except tmpfs -> nodirectio
         self.DIRECTIOS     = [ str(IO_TYPE_CFG_ARG) ]
         # self.MEDIA_TYPES   = ["ssd", "hdd", "nvme", "mem"]
         # XXX: MEDIA_TYPES receives from arguments now
         self.MEDIA_TYPES = [MEDIA_TYPE_CFG_ARG]
-        self.FS_TYPES      = ["tmpfs", "ext4", "ext4_no_jnl", "f2fs",
+        #self.FS_TYPES      = ["tmpfs", "ext4", "ext4_no_jnl", "f2fs",
+        self.FS_TYPES      = ["ext4",
                               # "xfs", "btrfs", "jfs", "reiserfs", "ext2", "ext3",
         ]
         self.BENCH_TYPES   = [
@@ -484,7 +485,10 @@ class Runner(object):
                 print("# INFO: DirectIO Enabled")
 
         # INFO: Created a lambda function to define when the perf should be called
-        call_perf = lambda : "perf record -g --call-graph dwarf -- " if RUN_PERF else " "
+
+        call_perf = lambda : "perf record -g -e 'ext4:*' --call-graph dwarf -- " if RUN_PERF else " "
+        # XXX
+        # call_perf = lambda : "perf record -g --call-graph dwarf -- " if RUN_PERF else " "
         cmd = ' '.join([self.fxmark_env(),
                         call_perf(),
                         bin,
