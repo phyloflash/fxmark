@@ -45,7 +45,7 @@ class Runner(object):
         self.PERFMON_LEVEL = pfm_lvl
         self.FILTER        = run_filter # media, fs, bench, ncore, directio
         self.DRYRUN        = False
-        self.DEBUG_OUT     = False
+        self.DEBUG_OUT     = True
 
         # bench config
         self.DISK_SIZE     = "30G"
@@ -308,14 +308,7 @@ class Runner(object):
             self.exec_cmd("mv oprofile_data ./logs/oprofile_"+str(idx_core)+"_"+bench+"_"+media+"_"+fs, self.dev_null);
 
         if RUN_PERF:
-            yr =   str(datetime.datetime.now().year)
-            mon =  str(datetime.datetime.now().month)
-            day =  str(datetime.datetime.now().day)
-            hr =   str(datetime.datetime.now().hour)
-            minu = str(datetime.datetime.now().minute)
-            sec =  str(datetime.datetime.now().second)
-
-            folder_prefix = "perf_"+yr+mon+day+"_"+hr+minu+sec+"_"+media+"_"+bench+"_"+fs
+            folder_prefix = "perf_"+media+"_"+bench+"_"+fs+"_"+str(idx_core)
 
             self.exec_cmd("mkdir "+folder_prefix, self.dev_null)
             self.exec_cmd("mv perf.data "+folder_prefix, self.dev_null)
