@@ -288,7 +288,7 @@ class Runner(object):
         if ENABLE_LOCK_STAT:
             self.set_lock_stat()
         else:
-            self.unset_lock_stat()
+            self.unset_lock_stat("lock_stat_"+media+"_"+bench+"_"+str(idx_core)+"_"+fs)
 
         if RUN_OPROFILE:
             self.oprofile = subprocess.Popen(["operf", "--system-wide"])
