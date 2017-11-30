@@ -1,0 +1,6 @@
+ncpu; secs; works; works/sec; real,sec; user,sec; nice,sec; sys,sec; idle,sec; iowait,sec; irq,sec; softirq,sec; steal,sec; guest,sec; user,util; nice,util; sys,util; idle,util; iowait,util; irq,util; softirq,util; steal,util; guest,util
+24; 30,652725; 10770047,000000; 351356,923288; 30,7523; 1,09; 0; 154,24; 566,74; 0,34; 0; 4,39; 0; 0; 0,147686; 0; 20,8982; 76,7883; 0,046067; 0; 0,594807; 0; 0
+
+nvme:ext4:DWOM:24:bufferedio
+ncpu; secs; works; works/sec; real,sec; user,sec; nice,sec; sys,sec; idle,sec; iowait,sec; irq,sec; softirq,sec; steal,sec; guest,sec; user,util; nice,util; sys,util; idle,util; iowait,util; irq,util; softirq,util; steal,util; guest,util
+24; 30,024960; 6220924,000000; 207191,749510; 30,1057; 0,96; 0; 103,11; 601,66; 0,34; 0; 1,14; 0; 0; 0,132865; 0; 14,2705; 83,2704; 0,0470564; 0; 0,157777; 0; 0

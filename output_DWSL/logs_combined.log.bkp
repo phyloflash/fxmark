@@ -1,0 +1,105 @@
+### SYSTEM         = Linux sierra 4.9.46 #1 SMP Thu Sep 21 23:46:31 KST 2017 x86_64 x86_64 x86_64 GNU/Linux
+### DISK_SIZE      = 30G
+### DURATION       = 30s
+### DIRECTIO       = bufferedio
+### MEDIA_TYPES    = nvme
+### FS_TYPES       = ext4_no_jnl
+### BENCH_TYPES    = DWOL,DWOM,DWAL,DWTL,DWSL,MWCL,MWCM,MWUL,MWUM,MWRL,MWRM,DRBL,DRBM,DRBH,MRPL,MRPM,MRPH,MRDL,MRDM
+### NCORES         = 1,2,4,6,12,18,24
+### CORE_SEQ       = 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47
+
+### MODEL_NAME     = Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz
+### PHYSICAL_CHIPS = 2
+### CORE_PER_CHIP  = 12
+### SMT_LEVEL      = 2
+
+## nvme:ext4_no_jnl:DWSL:1:bufferedio
+lock_stat_nvme_DWSL_1_ext4_no_jnl
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+1 30.000068 877047.000000 29234.833734 30.0597 0.22 0 14.01 89.53 9.54 0 0.03 0 0 0.182969 0 11.6518 74.4602 7.93422 0 0.0249504 0 0
+
+## nvme:ext4_no_jnl:DWSL:2:bufferedio
+lock_stat_nvme_DWSL_2_ext4_no_jnl
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+2 30.000059 1705528.000000 56850.821527 30.0575 0.37 0 30.67 89.49 15.98 0 0.34 0 0 0.246195 0 20.4075 59.5458 10.6329 0 0.226233 0 0
+
+## nvme:ext4_no_jnl:DWSL:4:bufferedio
+lock_stat_nvme_DWSL_4_ext4_no_jnl
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+4 30.000056 3055770.000000 101858.809864 30.0606 0.68 0 61.02 0.14 33.36 0 0 0 0 0.565524 0 50.7475 0.116431 27.744 0 0 0 0
+
+## nvme:ext4_no_jnl:DWSL:6:bufferedio
+lock_stat_nvme_DWSL_6_ext4_no_jnl
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+6 30.000046 4049330.000000 134977.461201 30.0626 1.17 0 104.08 0.24 46.28 0 0.08 0 0 0.648646 0 57.7018 0.133056 25.6575 0 0.0443519 0 0
+
+## nvme:ext4_no_jnl:DWSL:12:bufferedio
+lock_stat_nvme_DWSL_12_ext4_no_jnl
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+12 30.000073 5423532.000000 180783.959088 30.0633 1.42 0 116.07 0.57 184.32 0 0.06 0 0 0.393613 0 32.1737 0.158 51.0921 0 0.0166315 0 0
+
+## nvme:ext4_no_jnl:DWSL:18:bufferedio
+lock_stat_nvme_DWSL_18_ext4_no_jnl
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+18 30.000412 5474644.000000 182485.626859 30.0638 1.51 0 127.6 0.85 346.26 0 0.06 0 0 0.279036 0 23.5795 0.157073 63.9862 0 0.0110875 0 0
+
+## nvme:ext4_no_jnl:DWSL:24:bufferedio
+lock_stat_nvme_DWSL_24_ext4_no_jnl
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+24 30.000086 5488075.000000 182935.306124 30.0641 1.77 0 131.93 1.17 519.17 0 0.07 0 0 0.245309 0 18.2845 0.162153 71.9532 0 0.00970149 0 0
+
+## nvme:ext4:DWSL:1:bufferedio
+lock_stat_nvme_DWSL_1_ext4
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+1 30.000059 807712.000000 26923.680383 30.0601 0.32 0 15.19 89.84 8.42 0 0.03 0 0 0.266134 0 12.633 74.717 7.00264 0 0.02495 0 0
+
+## nvme:ext4:DWSL:2:bufferedio
+lock_stat_nvme_DWSL_2_ext4
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+2 30.000076 1578539.000000 52617.833368 30.0586 0.51 0 30.19 91.61 14.05 0 0.42 0 0 0.339337 0 20.0874 60.9542 9.3484 0 0.279454 0 0
+
+## nvme:ext4:DWSL:4:bufferedio
+lock_stat_nvme_DWSL_4_ext4
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+4 30.000061 2901303.000000 96709.903357 30.0622 1.29 0 63.22 32.48 30.91 0 0.06 0 0 0.85822 0 42.0594 21.6085 20.564 0 0.0399172 0 0
+
+## nvme:ext4:DWSL:6:bufferedio
+lock_stat_nvme_DWSL_6_ext4
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+6 30.000174 3857801.000000 128592.620115 30.0641 1.14 0 104.41 6 42.8 0 0.04 0 0 0.631982 0 57.8818 3.32622 23.727 0 0.0221748 0 0
+
+## nvme:ext4:DWSL:12:bufferedio
+lock_stat_nvme_DWSL_12_ext4
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+12 30.000051 5274065.000000 175801.870734 30.0653 1.59 0 119.3 16.52 168.14 0 0.04 0 0 0.440707 0 33.0669 4.57892 46.604 0 0.011087 0 0
+
+## nvme:ext4:DWSL:18:bufferedio
+lock_stat_nvme_DWSL_18_ext4
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+18 30.000483 5274017.000000 175797.738927 30.0653 1.62 0 127.37 26.56 319.59 0 0.05 0 0 0.299348 0 23.5358 4.90783 59.0547 0 0.00923914 0 0
+
+## nvme:ext4:DWSL:24:bufferedio
+lock_stat_nvme_DWSL_24_ext4
+# ncpu secs works works/sec real.sec user.sec nice.sec sys.sec idle.sec iowait.sec irq.sec softirq.sec steal.sec guest.sec user.util nice.util sys.util idle.util iowait.util irq.util softirq.util steal.util guest.util
+
+24 30.000203 5271616.000000 175719.343079 30.0653 1.66 0 131.49 36.99 475.88 0 0.07 0 0 0.230055 0 18.2228 5.12634 65.9509 0 0.0097011 0 0
+
+
+
+
+
+
+
