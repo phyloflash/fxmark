@@ -25,7 +25,7 @@ def catch_ctrl_C(sig, frame):
 class Runner(object):
     # media path
     LOOPDEV = "/dev/loop1"
-    NVMEDEV = "/dev/nvme1n1p1"
+    NVMEDEV = "/dev/nvme22n1p1"
     HDDDEV  = "/dev/mdxxx"
     SSDDEV  = "/dev/md0p1"
 
@@ -281,7 +281,7 @@ class Runner(object):
         self.exec_cmd("sync", self.dev_null)
         self.set_cpus(ncore)
 
-    def pre_work(self):
+    def pre_work(self, media, bench, idx_core, fs):
         self.keep_sudo()
         self.drop_caches()
         # INFO: included
@@ -523,7 +523,7 @@ class Runner(object):
                     self.log("# Fail to mount %s on %s." % (fs, media))
                     continue
                 self.log("## %s:%s:%s:%s:%s" % (media, fs, bench, nfg, dio))
-                self.pre_work()
+                self.pre_work(media, bench, ncore, fs)
 
                 ###########################################
                 # INFO: Here is where things happen indeed #
