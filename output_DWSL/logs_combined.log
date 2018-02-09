@@ -1,0 +1,16 @@
+nvme:ext4_no_jnl:DWSL:24:bufferedio
+lock_stat_nvme_DWSL_24_ext4_no_jnl
+cpu; secs; works; works/sec; real,sec; user,sec; nice,sec; sys,sec; idle,sec; iowait,sec; irq,sec; softirq,sec; steal,sec; guest,sec; user,util; nice,util; sys,util; idle,util; iowait,util; irq,util; softirq,util; steal,util; guest,util
+24; 30,000086; 5488075,000000; 182935,306124; 30,0641; 1,77; 0; 131,93; 1,17; 519,17; 0; 0,07; 0; 0; 0,245309; 0; 18,2845; 0,162153; 71,9532; 0; 0,00970149; 0; 0
+
+nvme:ext4:DWSL:24:bufferedio
+lock_stat_nvme_DWSL_24_ext4
+ncpu; secs; works; works/sec; real,sec; user,sec; nice,sec; sys,sec; idle,sec; iowait,sec; irq,sec; softirq,sec; steal,sec; guest,sec; user,util; nice,util; sys,util; idle,util; iowait,util; irq,util; softirq,util; steal,util; guest,util
+24; 30,000203; 5271616,000000; 175719,343079; 30,0653; 1,66; 0; 131,49; 36,99; 475,88; 0; 0,07; 0; 0; 0,230055; 0; 18,2228; 5,12634; 65,9509; 0; 0,0097011; 0; 0
+
+
+
+
+
+
+

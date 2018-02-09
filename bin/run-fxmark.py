@@ -25,7 +25,7 @@ def catch_ctrl_C(sig, frame):
 class Runner(object):
     # media path
     LOOPDEV = "/dev/loop1"
-    NVMEDEV = "/dev/nvme1n1p1"
+    NVMEDEV = "/dev/nvme22n1p1"
     HDDDEV  = "/dev/mdxxx"
     SSDDEV  = "/dev/md0p1"
 
@@ -268,12 +268,8 @@ class Runner(object):
     # INFO: Let's unset the lock_stat flag here
     def unset_lock_stat(self, path_string):
         self.exec_cmd("sudo sh -c \"echo 0 > /proc/sys/kernel/lock_stat\"", self.dev_null)
-        self.exec_cmd("sudo sh -c \"cp /proc/lock_stat ./logs/"+path_string+"\"", self.dev_null)
-        print(path_string)
-        print(path_string)
-        print(path_string)
-        print(path_string)
-        print(path_string)
+        if ENABLE_LOCK_STAT:
+            self.exec_cmd("sudo sh -c \"cp /proc/lock_stat ./logs/"+path_string+"\"", self.dev_null)
         print(path_string)
         #self.exec_cmd("mv lock_stat ./logs/"+path_string, self.dev_null)
 
@@ -285,11 +281,14 @@ class Runner(object):
         self.exec_cmd("sync", self.dev_null)
         self.set_cpus(ncore)
 
-    def pre_work(self):
+    def pre_work(self, media, bench, idx_core, fs):
         self.keep_sudo()
         self.drop_caches()
         # INFO: included
-        self.set_lock_stat()
+        if ENABLE_LOCK_STAT:
+            self.set_lock_stat()
+        else:
+            self.unset_lock_stat("lock_stat_"+media+"_"+bench+"_"+str(idx_core)+"_"+fs)
 
         if RUN_OPROFILE:
             self.oprofile = subprocess.Popen(["operf", "--system-wide"])
@@ -479,7 +478,7 @@ class Runner(object):
 
         # INFO: Created a lambda function to define when the perf should be called
 
-        call_perf = lambda : "perf record -g -e 'ext4:*' --call-graph dwarf -- " if RUN_PERF else " "
+        call_perf = lambda : "perf record -g -e 'ext4:*,jbd2:*' --call-graph dwarf -- " if RUN_PERF else " "
         # XXX
         # call_perf = lambda : "perf record -g --call-graph dwarf -- " if RUN_PERF else " "
         cmd = ' '.join([self.fxmark_env(),
@@ -524,7 +523,7 @@ class Runner(object):
                     self.log("# Fail to mount %s on %s." % (fs, media))
                     continue
                 self.log("## %s:%s:%s:%s:%s" % (media, fs, bench, nfg, dio))
-                self.pre_work()
+                self.pre_work(media, bench, ncore, fs)
 
                 ###########################################
                 # INFO: Here is where things happen indeed #
@@ -589,6 +588,7 @@ if __name__ == "__main__":
     RAMDISK_PATH_CFG_ARG = "/mnt/ramdisk1"
     RUN_PERF = 0
     RUN_OPROFILE = 0
+    ENABLE_LOCK_STAT = 0
 
     # If there is arguments, lets use them
     if (len(sys.argv) > 3):
@@ -600,6 +600,7 @@ if __name__ == "__main__":
         RAMDISK_PATH_CFG_ARG = sys.argv[5]
         RUN_PERF = int(sys.argv[6])
         RUN_OPROFILE = int(sys.argv[7])
+        ENABLE_LOCK_STAT = int(sys.argv[8])
 
     run_config = [
         (Runner.CORE_FINE_GRAIN,

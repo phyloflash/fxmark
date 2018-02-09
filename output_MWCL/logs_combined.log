@@ -1,0 +1,7 @@
+lock_stat_nvme_MWCL_24_ext4
+ncpu; secs; works; works/sec; real,sec; user,sec; nice,sec; sys,sec; idle,sec; iowait,sec; irq,sec; softirq,sec; steal,sec; guest,sec; user,util; nice,util; sys,util; idle,util; iowait,util; irq,util; softirq,util; steal,util; guest,util
+24; 19,352343; 1966045,000000; 101592,089928; 19,439; 2,28; 0; 209,89; 231,8; 15,62; 0; 0,14; 0; 0; 0,488708; 0; 44,989; 49,6853; 3,34808; 0; 0,0300084; 0; 0
+
+ncpu; secs; works; works/sec; real,sec; user,sec; nice,sec; sys,sec; idle,sec; iowait,sec; irq,sec; softirq,sec; steal,sec; guest,sec; user,util; nice,util; sys,util; idle,util; iowait,util; irq,util; softirq,util; steal,util; guest,util
+24; 5,705110; 1966045,000000; 344611,204288; 5,77075; 1,42; 0; 125,79; 1,19; 9,2; 0; 0; 0; 0; 1,02529; 0; 90,8245; 0,859219; 6,6427; 0; 0; 0; 0
+
